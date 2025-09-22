@@ -16,7 +16,7 @@ target "default" {
             type="sbom"
         }
     ]
-    platforms=["linux/amd64", "linux/arm/v5", "linux/arm64/v8"]
+    platforms=["linux/amd64", "linux/arm/v7", "linux/arm64/v8"]
 }
 
 target "validate-build" {
