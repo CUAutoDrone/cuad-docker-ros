@@ -141,9 +141,11 @@ RUN gz sim -v4 -r iris_runway.sdf
 
 RUN /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON --map --console
 
+ARG DEBIAN_FRONTEND=noninteractive
+
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
-    sudo apt-get update && sudo apt --no-install-recommends install -f noninteractive -y xpra
+    sudo apt-get update && sudo apt --no-install-recommends install -y xpra
 
 RUN sudo rm -rf /var/lib/apt/lists/* /var/cache/apt/* /home/user/.cache/pip
 
