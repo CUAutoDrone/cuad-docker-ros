@@ -3,6 +3,7 @@ target "default" {
     tags = ["ghcr.io/cuautodrone/cuad-ros:test"]
     args = {
         "ROS_APT_SOURCE_VERSION" = null
+        "GZ_SIM_SYSTEM_PLUGIN_PATH" = null
     }
     cache-from = [ "type=gha" ]
     cache-to = [ "type=gha,mode=max" ]

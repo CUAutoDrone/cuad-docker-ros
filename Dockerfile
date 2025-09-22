@@ -10,6 +10,8 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloa
 ARG TARGETARCH
 ARG TARGETVARIANT
 
+ARG GZ_SIM_SYSTEM_PLUGIN_PATH
+
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     apt update && apt dist-upgrade -y && apt autoclean
