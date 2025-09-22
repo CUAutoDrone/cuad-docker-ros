@@ -105,6 +105,8 @@ RUN source /opt/ros/humble/setup.bash
 
 ENV USER=user
 
+ARG DEBIAN_FRONTEND=noninteractive
+
 RUN Tools/environment_install/install-prereqs-ubuntu.sh -y
 
 RUN . ~/.profile
