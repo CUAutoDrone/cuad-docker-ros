@@ -60,7 +60,7 @@ jobs:
             cwd://${{ steps.meta.outputs.bake-file }}
           targets: default
           set: |
-            default.args.ROS_APT_SORUCE_VERSION=${{ env.ROS_APT_SOURCE_VERSION }}
+            default.args.ROS_APT_SOURCE_VERSION=${{ env.ROS_APT_SOURCE_VERSION }}
             default.tags=${{ env.TEST_NAME }}
           push: true
           provenance: true
