@@ -105,8 +105,6 @@ RUN source /opt/ros/humble/setup.bash
 
 ENV USER=user
 
-ARG DEBIAN_FRONTEND=noninteractive
-
 RUN Tools/environment_install/install-prereqs-ubuntu.sh -y
 
 RUN . ~/.profile
@@ -145,7 +143,7 @@ RUN /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f gazebo-iris --mode
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
-    sudo apt-get update && sudo apt --no-install-recommends install -y xpra
+    sudo apt-get update && sudo apt --no-install-recommends install -f noninteractive -y xpra
 
 RUN sudo rm -rf /var/lib/apt/lists/* /var/cache/apt/* /home/user/.cache/pip
 
