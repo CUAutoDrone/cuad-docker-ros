@@ -37,6 +37,10 @@ jobs:
             - name: Set Up Docker Buildx
               uses: docker/setup-buildx-action@v3
 
+
+            - name: Checkout Repo
+              uses: actions/checkout@v5
+
             - name: Push Image to GitHub Container Registry
               run: |
                 docker buildx imagetools create \
