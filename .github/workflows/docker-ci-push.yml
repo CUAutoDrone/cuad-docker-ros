@@ -83,4 +83,4 @@ jobs:
                 category: arm64
 
             - name: Merge PR
-              run: gh pr merge
+              run: gh pr merge -md
