@@ -46,9 +46,11 @@ jobs:
               uses: docker/scout-action@v1
               with: 
                 command: quickview,cves,recommendations
-                image: registry://ghcr.io/cuautodrone/cuad-ros:latest
+                image: ghcr.io/cuautodrone/cuad-ros:latest
                 platform: all
                 sarif-file: sarif.output.json
+                registry-user: ${{ github.repository_owner }}
+                registry-password: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Upload SARIF Results
               id: upload-sarif
