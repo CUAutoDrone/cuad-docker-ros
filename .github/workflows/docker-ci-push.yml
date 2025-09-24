@@ -56,6 +56,7 @@ jobs:
               uses: github/codeql-action/upload-sarif@v2
               with:
                 sarif_file: sarif.output.json
+                category: amd64
 
             - name: Scout ARM64
               uses: docker/scout-action@v1
@@ -71,6 +72,7 @@ jobs:
               uses: github/codeql-action/upload-sarif@v2
               with:
                 sarif_file: sarif.output.json
+                category: arm64
 
             - name: Merge PR
               run: gh pr merge
