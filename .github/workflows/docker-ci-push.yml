@@ -49,6 +49,7 @@ jobs:
                 image: ghcr.io/cuautodrone/cuad-ros:latest
                 platform: linux/amd64
                 sarif-file: sarif.output.json
+                write-comment: false
 
             - name: Upload SARIF Results AMD64
               id: upload-sarif-amd64
@@ -63,6 +64,7 @@ jobs:
                 image: ghcr.io/cuautodrone/cuad-ros:latest
                 platform: linux/arm64/v8
                 sarif-file: sarif.output.json
+                write-comment: false
 
             - name: Upload SARIF Results ARM64
               id: upload-sarif-arm64
