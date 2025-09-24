@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS main
+FROM ubuntu:24.04 AS main
 
 LABEL name="cuad-ros"
 LABEL org.opencontainers.image.authors="cuautodrone"
