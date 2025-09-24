@@ -29,7 +29,7 @@ jobs:
             - name: Push Image to GitHub Container Registry
               run: |
                 docker buildx imagetools create \
-                --tag ghcr.io/cuautodrone/cuad-ros:latest
+                --tag ghcr.io/cuautodrone/cuad-ros:latest\ 
                 ghcr.io/cuautodrone/cuad-ros:test
 
             - name: Scout
