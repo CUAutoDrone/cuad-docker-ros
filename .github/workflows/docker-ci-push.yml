@@ -49,7 +49,7 @@ jobs:
                 image: ghcr.io/cuautodrone/cuad-ros:latest
                 platform: all
                 sarif-file: sarif.output.json
-                debug: true
+                verbose-debug: true
 
             - name: Upload SARIF Results
               id: upload-sarif
