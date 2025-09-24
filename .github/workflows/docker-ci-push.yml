@@ -46,7 +46,7 @@ jobs:
               uses: docker/scout-action@v1
               with: 
                 command: quickview,cves,recommendations
-                image: ghcr.io/cuautodrone/cuad-ros:latest
+                image: registry://ghcr.io/cuautodrone/cuad-ros:latest
                 platform: all
                 sarif-file: sarif.output.json
 
