@@ -1,9 +1,6 @@
 name: ci-pr
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
 
 env:
@@ -11,11 +8,12 @@ env:
   TEST_NAME: ghcr.io/cuautodrone/cuad-ros:test
 
 jobs:
-  docker:
+  docker-pr:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+      pull-requests: write
     steps:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -70,3 +68,21 @@ jobs:
           sbom: true
         env:
           SOURCE_DATE_EPOCH: ${{ env.TIMESTAMP }}
+
+      - name: Scout AMD64
+        uses: docker/scout-action@v1
+        with: 
+          command: quickview,cves,recommendations,compare
+          image: ghcr.io/cuautodrone/cuad-ros:test
+          to: ghcr.io/cuautodrone/cuad-ros:latest
+          platform: linux/amd64
+          only-fixed: true
+
+      - name: Scout ARM64
+        uses: docker/scout-action@v1
+        with: 
+          command: quickview,cves,recommendations,compare
+          image: ghcr.io/cuautodrone/cuad-ros:test
+          to: ghcr.io/cuautodrone/cuad-ros:latest
+          platform: linux/arm64
+          only-fixed: true
