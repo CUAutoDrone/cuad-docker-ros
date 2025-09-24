@@ -62,7 +62,7 @@ jobs:
               with:
                 command: quickview,cves,recommendations
                 image: ghcr.io/cuautodrone/cuad-ros:latest
-                platform: linux/arm64/v8
+                platform: linux/arm64
                 sarif-file: sarif.output.json
                 write-comment: false
 
