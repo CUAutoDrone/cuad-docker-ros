@@ -49,7 +49,7 @@ jobs:
                 image: ghcr.io/cuautodrone/cuad-ros:latest
                 platform: all
                 sarif-file: sarif.output.json
-                registry-user: ${{ github.actor }}
+                registry-user: ${{ github.repository_owner }}
                 registry-password: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Upload SARIF Results
