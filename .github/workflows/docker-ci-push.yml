@@ -39,6 +39,8 @@ jobs:
 
             - name: Checkout Repo
               uses: actions/checkout@v5
+              with:
+                ref: ${{ github.event.pull_request.head.sha }}
 
             - name: Push Image to GitHub Container Registry
               run: |
