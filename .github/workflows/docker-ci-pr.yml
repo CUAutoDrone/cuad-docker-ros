@@ -1,9 +1,6 @@
 name: ci-pr
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
 
 env:
@@ -11,12 +8,19 @@ env:
   TEST_NAME: ghcr.io/cuautodrone/cuad-ros:test
 
 jobs:
-  docker:
+  docker-pr:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+      pull-requests: write
     steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -41,8 +45,6 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.IMAGE_NAME }}
-
-
 
       - name: Get ROS Apt Source Version
         run: echo "ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}')" >> $GITHUB_ENV
@@ -70,3 +72,27 @@ jobs:
           sbom: true
         env:
           SOURCE_DATE_EPOCH: ${{ env.TIMESTAMP }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Scout AMD64
+        uses: docker/scout-action@v1
+        with: 
+          command: quickview,cves,recommendations,compare
+          image: ghcr.io/cuautodrone/cuad-ros:test
+          to: ghcr.io/cuautodrone/cuad-ros:latest
+          platform: linux/amd64
+          only-fixed: true
+
+      - name: Scout ARM64
+        uses: docker/scout-action@v1
+        with: 
+          command: quickview,cves,recommendations,compare
+          image: ghcr.io/cuautodrone/cuad-ros:test
+          to: ghcr.io/cuautodrone/cuad-ros:latest
+          platform: linux/arm64
+          only-fixed: true

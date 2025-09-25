@@ -1,0 +1,68 @@
+name: ci-scout
+
+on:
+    schedule:
+        - cron: 46 4 * * 5
+
+env:
+    IMAGE_NAME: ghcr.io/cuautodrone/cuad-ros
+
+jobs:
+    docker-scout:
+        runs-on: ubuntu-latest
+        permissions:
+          security-events: write
+        steps:
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v3
+              with:
+                registry: ghcr.io
+                username: ${{ github.repository_owner }}
+                password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Set Up QEMU
+              uses: docker/setup-qemu-action@v3
+
+            - name: Set Up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Checkout Repo
+              uses: actions/checkout@v5
+
+            - name: Scout AMD64
+              uses: docker/scout-action@v1
+              with: 
+                command: quickview,cves,recommendations
+                image: ghcr.io/cuautodrone/cuad-ros:latest
+                platform: linux/amd64
+                sarif-file: sarif.output.json
+                only-fixed: true
+
+            - name: Upload SARIF Results AMD64
+              id: upload-sarif-amd64
+              uses: github/codeql-action/upload-sarif@v3
+              with:
+                sarif_file: sarif.output.json
+                category: amd64
+
+            - name: Scout ARM64
+              uses: docker/scout-action@v1
+              with: 
+                command: quickview,cves,recommendations
+                image: ghcr.io/cuautodrone/cuad-ros:latest
+                platform: linux/arm64
+                sarif-file: sarif.output.json
+                only-fixed: true
+
+            - name: Upload SARIF Results ARM64
+              id: upload-sarif-arm64
+              uses: github/codeql-action/upload-sarif@v3
+              with:
+                sarif_file: sarif.output.json
+                category: arm64
