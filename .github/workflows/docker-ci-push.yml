@@ -66,3 +66,27 @@ jobs:
           sbom: true
         env:
           SOURCE_DATE_EPOCH: ${{ env.TIMESTAMP }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Scout AMD64
+        uses: docker/scout-action@v1
+        with: 
+          command: quickview,cves,recommendations,compare
+          image: ghcr.io/cuautodrone/cuad-ros:main
+          to: ghcr.io/cuautodrone/cuad-ros:latest
+          platform: linux/amd64
+          only-fixed: true
+
+      - name: Scout ARM64
+        uses: docker/scout-action@v1
+        with: 
+          command: quickview,cves,recommendations,compare
+          image: ghcr.io/cuautodrone/cuad-ros:main
+          to: ghcr.io/cuautodrone/cuad-ros:latest
+          platform: linux/arm64
+          only-fixed: true
