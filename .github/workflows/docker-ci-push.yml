@@ -23,7 +23,7 @@ jobs:
           
       - name: Clean Old Package Config
         run: sudo apt purge -y '~c'
-      
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
