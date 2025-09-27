@@ -50,7 +50,7 @@ RUN dpkg -i /tmp/ros2-apt-source.deb && rm /tmp/ros2-apt-source.deb
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
-    apt-get update && apt upgrade
+    apt-get update && apt upgrade -y
 
 ARG DEBIAN_FRONTEND=noninteractive
 
