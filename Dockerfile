@@ -151,6 +151,6 @@ RUN sudo rm /etc/apt/apt.conf.d/01overrides
 
 ENV DISPLAY=:0
 
-RUN xpra start --bind-tcp=0.0.0.0:10000
+RUN echo 'ps cax | grep xpra || xpra start --bind-tcp=0.0.0.0:10000' >> /home/user/.bashrc
 
 EXPOSE 10000
