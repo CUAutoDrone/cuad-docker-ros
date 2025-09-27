@@ -50,7 +50,7 @@ RUN dpkg -i /tmp/ros2-apt-source.deb && rm /tmp/ros2-apt-source.deb
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
-    apt-get update && apt upgrade
+    apt-get update && apt upgrade -y
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -151,6 +151,6 @@ RUN sudo rm /etc/apt/apt.conf.d/01overrides
 
 ENV DISPLAY=:0
 
-RUN xpra start --bind-tcp=0.0.0.0:10000
+RUN echo 'ps cax | grep xpra || xpra start --bind-tcp=0.0.0.0:10000' >> /home/user/.bashrc
 
 EXPOSE 10000
