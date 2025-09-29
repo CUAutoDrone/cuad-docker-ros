@@ -153,6 +153,6 @@ ENV DISPLAY=:0
 
 RUN echo 'source /opt/ros/humble/setup.bash' >> /home/user/.bashrc
 
-RUN echo 'ps cax | grep xpra || xpra start --bind-tcp=0.0.0.0:10000 2>/dev/null' >> /home/user/.bashrc
+RUN echo 'ps cax | grep xpra >/dev/null || xpra start --bind-tcp=0.0.0.0:10000 2>/dev/null' >> /home/user/.bashrc
 
 EXPOSE 10000
