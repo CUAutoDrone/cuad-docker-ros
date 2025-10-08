@@ -2,6 +2,9 @@ name: ci-pr
 
 on:
   pull_request:
+  pull_request_target:
+    types:
+      - labeled
 
 env:
   IMAGE_NAME: ghcr.io/cuautodrone/cuad-ros:latest
@@ -9,6 +12,7 @@ env:
 
 jobs:
   docker-pr:
+    if: (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') || contains(github.event.pull_request.labels.*.name, 'run-ci-pr')
     runs-on: ubuntu-latest
     permissions:
       contents: read
