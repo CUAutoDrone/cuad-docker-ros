@@ -32,7 +32,7 @@ Then, if you want to clear the build cache afterwards, run `docker buildx prune 
 
 ## How do I use this repo?
 
-Any new changes should first be tested by opening a Pull Request. All Pull Requests will be built and pushed to the `test` tag. Thus, if a Pull Request is already open, please do not open another one at the same time as it will overwrite the first pull request. Once the CI build is finished and you are ready to merge your changes, please add the `pr-pull` label to the PR, which will automatically merge the PR at the end of the workflow. This copies the image with the `test` tag to the `latest` tag, thus promoting the changes to the stable image. Whenever a commit is pushed directly to the `main` branch, an image is built with
+Any new changes should first be tested by opening a Pull Request. All Pull Requests will be built and pushed to the `test` tag. If the Pull Request was created from a fork of this repository, or was created by Dependabot, the `run-ci-pr` label must first be added **after** the Pull Request is reviewed in order for the PUll Request to be built. Thus, if a Pull Request is already open, please do not open another one at the same time as it will overwrite the first pull request. Once the CI build is finished and you are ready to merge your changes, please add the `pr-pull` label to the PR, which will automatically merge the PR at the end of the workflow. This copies the image with the `test` tag to the `latest` tag, thus promoting the changes to the stable image. Whenever a commit is pushed directly to the `main` branch, an image is built with
 the `main` tag.
 
 `.dockerbuild` files can be found in the build summaries from the `ci-pr` action.
