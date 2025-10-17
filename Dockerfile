@@ -151,7 +151,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
 
 ADD --link https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh /home/user/
 
-RUN sudo bash ./install_geographiclib_datasets.sh
+RUN sudo bash /home/user/install_geographiclib_datasets.sh
 
 RUN sudo geographiclib-get-geoids egm96-5
 
