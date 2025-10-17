@@ -145,6 +145,26 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y xpra
 
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
+    sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y geographiclib-tools libgeographic19
+
+ADD --link https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh /home/user/
+
+RUN sudo bash /home/user/install_geographiclib_datasets.sh
+
+RUN sudo geographiclib-get-geoids egm96-5
+
+RUN sudo geographiclib-get-magnetic wmm2020
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
+    sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y libasio-dev libgeographic-dev
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
+    sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y ros-humble-mavros ros-humble-mavros-extras
+
 RUN sudo rm -rf /var/lib/apt/lists/* /var/cache/apt/* /home/user/.cache/pip
 
 RUN sudo rm /etc/apt/apt.conf.d/01overrides
