@@ -1,4 +1,4 @@
-ARG BUILDKIT_SBOM_SCAN_CONTEXT=true
+ARG BUILDKIT_SBOM_SCAN_STAGE=true
 FROM ubuntu:22.04 AS main
 
 LABEL name="cuad-ros"
