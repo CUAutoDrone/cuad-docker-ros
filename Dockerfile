@@ -106,6 +106,10 @@ RUN source /opt/ros/humble/setup.bash
 
 ENV USER=user
 
+RUN sudo chown -R user:sudo /home/user
+
+RUN sudo chmod -R 750 /home/user
+
 RUN Tools/environment_install/install-prereqs-ubuntu.sh -y
 
 RUN . ~/.profile
