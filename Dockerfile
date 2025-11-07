@@ -144,10 +144,6 @@ RUN /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f gazebo-iris --mode
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
-    sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y xpra
-
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y geographiclib-tools libgeographic19
 
 ADD --link https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh /home/user/
@@ -165,6 +161,14 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y ros-humble-mavros ros-humble-mavros-extras
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
+    sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y xpra
+
+RUN sudo chown -R user:sudo /home/user
+
+RUN sudo chmod -R 750 /home/user
 
 RUN sudo rm -rf /var/lib/apt/lists/* /var/cache/apt/* /home/user/.cache/pip
 
