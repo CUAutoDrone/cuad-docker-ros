@@ -16,7 +16,7 @@ If you need to run multiple GUI apps at once, and don't want to open a second te
 
 To open a second shell within the container, get the container id (this can be found by running `docker ps`) then run `docker exec -it <container_id> /bin/sh` where `<container_id>` is the container id found previously.
 
-Additionally, `sim_vehicle.py` can be found in `/ardupilot/Tools/autotest/`. 
+Additionally, `sim_vehicle.py` can be found in `/ardupilot/Tools/autotest/`.
 
 **Note:** The timezone in the container is hardcoded to `America/New_York`. If you want to change the timezone, run `sudo dpkg-reconfigure tzdata` in the container.
 
