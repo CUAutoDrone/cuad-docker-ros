@@ -14,6 +14,10 @@ To run GUI apps, go to `localhost:port` in a browser, where `port` is the port n
 
 If you need to run multiple GUI apps at once, and don't want to open a second terminal inside the container, you can run the first command with a `&` character at the end, which will cause it to run in the background.
 
+To open a second shell within the container, get the container id (this can be found by running `docker ps`) then run `docker exec -it <container_id> /bin/sh` where `<container_id>` is the container id found previously.
+
+Additionally, `sim_vehicle.py` can be found in `/ardupilot/Tools/autotest/`. 
+
 **Note:** The timezone in the container is hardcoded to `America/New_York`. If you want to change the timezone, run `sudo dpkg-reconfigure tzdata` in the container.
 
 ## How do I use my camera with this container?
