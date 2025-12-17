@@ -13,6 +13,8 @@ ARG TARGETVARIANT
 
 ARG GZ_SIM_SYSTEM_PLUGIN_PATH
 
+ARG GZ_SIM_RESOURCE_PATH
+
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     apt update && apt dist-upgrade -y && apt autoclean
@@ -134,9 +136,13 @@ RUN cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 RUN make -j$(nproc)
 
+RUN echo 'export GZ_SIM_SYSTEM_PLUGIN_PATH=/gz_ws/src/ardupilot_gazebo/build:${GZ_SIM_SYSTEM_PLUGIN_PATH}' >> /home/user/.bashrc
+
+RUN echo 'export GZ_SIM_RESOURCE_PATH=/gz_ws/src/ardupilot_gazebo/models:/gz_ws/src/ardupilot_gazebo/worlds:${GZ_SIM_RESOURCE_PATH}' >> /home/user/.bashrc
+
 ENV GZ_SIM_SYSTEM_PLUGIN_PATH=/gz_ws/src/ardupilot_gazebo/build:$GZ_SIM_SYSTEM_PLUGIN_PATH
 
-ENV GZ_SIM_RESOURCE_PATH=/gz_ws/src/ardupilot_gazebo/models:/gz_ws/src/ardupilot_gazebo/worlds:GZ_SIM_RESOURCE_PATH
+ENV GZ_SIM_RESOURCE_PATH=/gz_ws/src/ardupilot_gazebo/models:/gz_ws/src/ardupilot_gazebo/worlds:$GZ_SIM_RESOURCE_PATH
 
 RUN gz sim -v4 -r iris_runway.sdf
 
