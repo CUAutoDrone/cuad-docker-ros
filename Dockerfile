@@ -170,7 +170,7 @@ RUN sudo geographiclib-get-magnetic wmm2020
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
-    sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y libasio-dev libgeographic-dev
+    sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y libasio-dev libgeographiclib-dev
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
