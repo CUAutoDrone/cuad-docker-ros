@@ -122,7 +122,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo apt --no-install-recommends install -y python3-pip
 
-RUN pip install --upgrade pymavlink MAVProxy --user
+RUN pip install --break-system-packages --upgrade pymavlink MAVProxy --user
 
 RUN Tools/autotest/sim_vehicle.py -v copter --console --map -w
 
