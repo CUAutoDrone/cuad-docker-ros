@@ -118,9 +118,9 @@ RUN . ~/.profile
 
 ENV PATH=/home/user/.local/bin:$PATH
 
-RUN Tools/autotest/sim_vehicle.py -v copter --console --map -w
-
 RUN pip install --upgrade pymavlink MAVProxy --user
+
+RUN Tools/autotest/sim_vehicle.py -v copter --console --map -w
 
 RUN gz sim -v4 -r shapes.sdf
 
