@@ -116,13 +116,15 @@ RUN Tools/environment_install/install-prereqs-ubuntu.sh -y
 
 RUN . ~/.profile
 
+RUN echo 'source ~/.profile' >> /home/user/.bashrc
+
 ENV PATH=/home/user/.local/bin:$PATH
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo apt --no-install-recommends install -y python3-pip
 
-RUN pip install --break-system-packages --upgrade pymavlink MAVProxy --user
+RUN pip install --upgrade pymavlink MAVProxy --user
 
 RUN Tools/autotest/sim_vehicle.py -v copter --console --map -w
 
