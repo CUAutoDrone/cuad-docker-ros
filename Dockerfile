@@ -126,11 +126,11 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo apt --no-install-recommends install -y python3-pip
 
-RUN pip install --upgrade pymavlink MAVProxy --user
+RUN source ~/.bashrc && pip install --upgrade pymavlink MAVProxy --user
 
-RUN Tools/autotest/sim_vehicle.py -v copter --console --map -w
+RUN source ~/.bashrc && Tools/autotest/sim_vehicle.py -v copter --console --map -w
 
-RUN gz sim -v4 -r shapes.sdf
+RUN source ~/.bashrc && gz sim -v4 -r shapes.sdf
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
@@ -144,9 +144,9 @@ ENV GZ_VERSION=harmonic
 
 WORKDIR /gz_ws/src/ardupilot_gazebo/build
 
-RUN cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
+RUN source ~/.bashrc && cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
-RUN make -j$(nproc)
+RUN source ~/.bashrc && make -j$(nproc)
 
 RUN echo 'export GZ_SIM_SYSTEM_PLUGIN_PATH=/gz_ws/src/ardupilot_gazebo/build:${GZ_SIM_SYSTEM_PLUGIN_PATH}' >> /home/user/.bashrc
 
@@ -156,9 +156,9 @@ ENV GZ_SIM_SYSTEM_PLUGIN_PATH=/gz_ws/src/ardupilot_gazebo/build:$GZ_SIM_SYSTEM_P
 
 ENV GZ_SIM_RESOURCE_PATH=/gz_ws/src/ardupilot_gazebo/models:/gz_ws/src/ardupilot_gazebo/worlds:$GZ_SIM_RESOURCE_PATH
 
-RUN gz sim -v4 -r iris_runway.sdf
+RUN source ~/.bashrc && gz sim -v4 -r iris_runway.sdf
 
-RUN /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON --map --console
+RUN source ~/.bashrc && /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON --map --console
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
@@ -195,8 +195,6 @@ RUN sudo rm /etc/apt/apt.conf.d/01overrides
 ENV DISPLAY=:0
 
 RUN echo 'source /opt/ros/jazzy/setup.bash' >> /home/user/.bashrc
-
-RUN echo '. ~/.profile' >> /home/user/.bashrc
 
 RUN echo 'ps cax | grep xpra >/dev/null || xpra start --bind-tcp=0.0.0.0:10000 2>/dev/null' >> /home/user/.bashrc
 
