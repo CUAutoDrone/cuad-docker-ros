@@ -126,11 +126,11 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo apt --no-install-recommends install -y python3-pip
 
-RUN source ~/.bashrc && pip install --upgrade pymavlink MAVProxy --user
+RUN PATH=/home/user/venv-ardupilot/bin:$PATH pip install --upgrade pymavlink MAVProxy --user
 
-RUN source ~/.bashrc && Tools/autotest/sim_vehicle.py -v copter --console --map -w
+RUN PATH=/home/user/venv-ardupilot/bin:$PATH Tools/autotest/sim_vehicle.py -v copter --console --map -w
 
-RUN source ~/.bashrc && gz sim -v4 -r shapes.sdf
+RUN PATH=/home/user/venv-ardupilot/bin:$PATH gz sim -v4 -r shapes.sdf
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
@@ -144,9 +144,9 @@ ENV GZ_VERSION=harmonic
 
 WORKDIR /gz_ws/src/ardupilot_gazebo/build
 
-RUN source ~/.bashrc && cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
+RUN PATH=/home/user/venv-ardupilot/bin:$PATH cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
-RUN source ~/.bashrc && make -j$(nproc)
+RUN PATH=/home/user/venv-ardupilot/bin:$PATH make -j$(nproc)
 
 RUN echo 'export GZ_SIM_SYSTEM_PLUGIN_PATH=/gz_ws/src/ardupilot_gazebo/build:${GZ_SIM_SYSTEM_PLUGIN_PATH}' >> /home/user/.bashrc
 
@@ -156,9 +156,9 @@ ENV GZ_SIM_SYSTEM_PLUGIN_PATH=/gz_ws/src/ardupilot_gazebo/build:$GZ_SIM_SYSTEM_P
 
 ENV GZ_SIM_RESOURCE_PATH=/gz_ws/src/ardupilot_gazebo/models:/gz_ws/src/ardupilot_gazebo/worlds:$GZ_SIM_RESOURCE_PATH
 
-RUN source ~/.bashrc && gz sim -v4 -r iris_runway.sdf
+RUN PATH=/home/user/venv-ardupilot/bin:$PATH gz sim -v4 -r iris_runway.sdf
 
-RUN source ~/.bashrc && /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON --map --console
+RUN PATH=/home/user/venv-ardupilot/bin:$PATH /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON --map --console
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
