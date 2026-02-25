@@ -112,11 +112,13 @@ RUN source /opt/ros/jazzy/setup.bash
 
 ENV USER=user
 
+ARG AP_DOCKER_BUILD=1
+
 RUN Tools/environment_install/install-prereqs-ubuntu.sh -y
 
-RUN . ~/.profile
+ARG AP_DOCKER_BUILD=0
 
-RUN echo 'source ~/.profile' >> /home/user/.bashrc
+RUN . ~/.profile
 
 ENV PATH=/home/user/.local/bin:$PATH
 
@@ -124,11 +126,11 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo apt --no-install-recommends install -y python3-pip
 
-RUN source ~/.profile && pip install --upgrade pymavlink MAVProxy --user
+RUN pip install --upgrade pymavlink MAVProxy --user
 
-RUN source ~/.profile && Tools/autotest/sim_vehicle.py -v copter --console --map -w
+RUN Tools/autotest/sim_vehicle.py -v copter --console --map -w
 
-RUN source ~/.profile && gz sim -v4 -r shapes.sdf
+RUN gz sim -v4 -r shapes.sdf
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
@@ -142,9 +144,9 @@ ENV GZ_VERSION=harmonic
 
 WORKDIR /gz_ws/src/ardupilot_gazebo/build
 
-RUN source ~/.profile && cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
+RUN cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
-RUN source ~/.proflie && make -j$(nproc)
+RUN make -j$(nproc)
 
 RUN echo 'export GZ_SIM_SYSTEM_PLUGIN_PATH=/gz_ws/src/ardupilot_gazebo/build:${GZ_SIM_SYSTEM_PLUGIN_PATH}' >> /home/user/.bashrc
 
@@ -154,9 +156,9 @@ ENV GZ_SIM_SYSTEM_PLUGIN_PATH=/gz_ws/src/ardupilot_gazebo/build:$GZ_SIM_SYSTEM_P
 
 ENV GZ_SIM_RESOURCE_PATH=/gz_ws/src/ardupilot_gazebo/models:/gz_ws/src/ardupilot_gazebo/worlds:$GZ_SIM_RESOURCE_PATH
 
-RUN source ~/.profile && gz sim -v4 -r iris_runway.sdf
+RUN gz sim -v4 -r iris_runway.sdf
 
-RUN source ~/.profile && /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON --map --console
+RUN /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON --map --console
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
@@ -193,6 +195,8 @@ RUN sudo rm /etc/apt/apt.conf.d/01overrides
 ENV DISPLAY=:0
 
 RUN echo 'source /opt/ros/jazzy/setup.bash' >> /home/user/.bashrc
+
+RUN echo '. ~/.profile' >> /home/user/.bashrc
 
 RUN echo 'ps cax | grep xpra >/dev/null || xpra start --bind-tcp=0.0.0.0:10000 2>/dev/null' >> /home/user/.bashrc
 
