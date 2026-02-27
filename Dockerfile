@@ -160,6 +160,8 @@ RUN PATH=/home/user/venv-ardupilot/bin:$PATH gz sim -v4 -r iris_runway.sdf
 
 RUN PATH=/home/user/venv-ardupilot/bin:$PATH /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON --map --console
 
+RUN rm -f /gz_ws/src/ardupilot_gazebo/build/qemu*
+
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y geographiclib-tools libgeographiclib26
