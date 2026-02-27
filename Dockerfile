@@ -5,7 +5,7 @@ ARG TARGETVARIANT
 
 RUN apt-get update && apt --no-install-recommends install -y python3-pip
 
-RUN pip download -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04 wxpython
+RUN pip download -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04 wxpython
 
 RUN ls *.whl || (apt-get update && apt --no-install-recommends install -y python3-venv gettext dos2unix lsb-release sudo && mkdir wxpython && tar xzf wxpython* -C wxpython --strip-components=1 && python3 -m venv venv && source venv/bin/activate && pip install --upgrade pip setuptools wheel && cd wxpython && python -m pip install --upgrade requirements.txt && ./buildtools/install_depends.txt && cd .. && WXPYTHON_BUILD_ARGS="--release" pip wheel -v wxpython*.tar.gz)
 
