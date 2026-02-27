@@ -3,9 +3,7 @@ FROM ubuntu:24.04 AS build-wxpython
 ARG TARGETARCH
 ARG TARGETVARIANT
 
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
-    apt-get update && apt --no-install-recommends install -y python3-pip
+RUN apt-get update && apt --no-install-recommends install -y python3-pip
 
 RUN pip download -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04 wxpython
 
