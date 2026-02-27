@@ -1,3 +1,16 @@
+FROM ubuntu:24.04 AS build-wxpython
+
+ARG TARGETARCH
+ARG TARGETVARIANT
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
+    apt-get update && apt --no-install-recommends install -y python3-pip
+
+RUN pip download -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04 wxpython
+
+RUN ls *.whl || (apt-get update && apt --no-install-recommends install -y python3-venv gettext dos2unix lsb-release sudo && mkdir wxpython && tar xzf wxpython* -C wxpython --strip-components=1 && python3 -m venv venv && source venv/bin/activate && pip install --upgrade pip setuptools wheel && cd wxpython && python -m pip install --upgrade requirements.txt && ./buildtools/install_depends.txt && cd .. && WXPYTHON_BUILD_ARGS="--release" pip wheel -v wxpython*.tar.gz)
+
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
 FROM ubuntu:24.04 AS main
 
@@ -128,6 +141,11 @@ ENV PATH=/home/user/.local/bin:$PATH
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo apt --no-install-recommends install -y python3-pip
+
+COPY --from=build-wxpython *.whl /
+
+RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
+    mv /*.whl /home/user/.cache/pip/
 
 RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
     PATH=/home/user/venv-ardupilot/bin:$PATH pip install --upgrade pymavlink MAVProxy --user
