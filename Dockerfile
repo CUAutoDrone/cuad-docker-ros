@@ -7,7 +7,7 @@ RUN apt-get update && apt --no-install-recommends install -y python3-pip
 
 RUN pip download -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04 wxpython
 
-RUN ls *.whl || (apt-get update && apt --no-install-recommends install -y python3-venv gettext dos2unix lsb-release sudo && mkdir wxpython && tar xzf wxpython*.tar.gz -C wxpython --strip-components=1 && python3 -m venv venv && . venv/bin/activate && pip install --upgrade pip setuptools wheel && cd wxpython && python -m pip install --upgrade -r requirements.txt && ./buildtools/install_depends.sh && cd .. && WXPYTHON_BUILD_ARGS="--release" pip wheel -v wxpython*.tar.gz)
+RUN ls *.whl || (apt-get update && apt --no-install-recommends install -y python3-venv gettext dos2unix lsb-release sudo gcc && mkdir wxpython && tar xzf wxpython*.tar.gz -C wxpython --strip-components=1 && python3 -m venv venv && . venv/bin/activate && pip install --upgrade pip setuptools wheel && cd wxpython && python -m pip install --upgrade -r requirements.txt && ./buildtools/install_depends.sh && cd .. && WXPYTHON_BUILD_ARGS="--release" pip wheel -v wxpython*.tar.gz)
 
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
 FROM ubuntu:24.04 AS main
