@@ -143,7 +143,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
 COPY --from=build-wxpython *.whl /
 
 RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
-    mv /*.whl /home/user/.cache/pip/
+    sudo mv /*.whl /home/user/.cache/pip/
 
 RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
     PATH=/home/user/venv-ardupilot/bin:$PATH pip install --upgrade pymavlink MAVProxy --user
