@@ -125,7 +125,12 @@ ENV USER=user
 
 ARG AP_DOCKER_BUILD=1
 
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
+COPY --from=build-wxpython *.whl /
+
+RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
+    sudo mv /*.whl /home/user/.cache/pip/
+    
+ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
     Tools/environment_install/install-prereqs-ubuntu.sh -y
@@ -139,11 +144,6 @@ ENV PATH=/home/user/.local/bin:$PATH
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo apt --no-install-recommends install -y python3-pip
-
-COPY --from=build-wxpython *.whl /
-
-RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
-    sudo mv /*.whl /home/user/.cache/pip/
 
 RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
     PATH=/home/user/venv-ardupilot/bin:$PATH pip install --upgrade pymavlink MAVProxy --user
