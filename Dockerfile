@@ -1,15 +1,3 @@
-FROM ubuntu:24.04 AS build-wxpython
-
-ARG TARGETARCH
-ARG TARGETVARIANT
-
-RUN apt-get update && apt --no-install-recommends install -y python3-pip
-
-RUN pip download -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04 wxpython
-
-RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
-    ls *.whl || (apt-get update && apt --no-install-recommends install -y python3-venv python3-dev gettext dos2unix lsb-release sudo build-essential && mkdir wxpython && tar xzf wxpython*.tar.gz -C wxpython --strip-components=1 && python3 -m venv venv && . venv/bin/activate && pip install --upgrade pip setuptools wheel && cd wxpython && python -m pip install --upgrade -r requirements.txt && ./buildtools/install_depends.sh && cd .. && WXPYTHON_BUILD_ARGS="--release --jobs=$(nproc)" pip wheel -v wxpython*.tar.gz)
-
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
 FROM ubuntu:24.04 AS main
 
@@ -126,10 +114,10 @@ ENV USER=user
 
 ARG AP_DOCKER_BUILD=1
 
-COPY --from=build-wxpython *.whl /
+COPY --link *.whl /
 
 RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
-    sudo mv /*.whl /home/user/.cache/pip/
+    sudo mv /*.whl /home/user/.cache/pip/ || true
     
  RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
