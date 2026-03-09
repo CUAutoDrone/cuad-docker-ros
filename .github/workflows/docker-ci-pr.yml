@@ -14,13 +14,14 @@ jobs:
   build-wxpython-arm-wheel:
     if: ((github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]') || contains(github.event.pull_request.labels.*.name, 'run-ci-pr')) && !contains(github.event.pull_request.labels.*.name, 'pr-pull')
     runs-on: ubuntu-24.04-arm
+    permissions: {}
 
     steps:
       - name: Download wxpython Tarball
         run: pip download -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04 wxpython
 
       - name: Extract Tarball
-        run: tar xzf wxpython*.tar.gz -C wxpython --strip-components=1
+        run: mkdir wxpython && tar xzf wxpython*.tar.gz -C wxpython --strip-components=1
 
       - name: Install Python Dependencies
         run: cd wxpython && python -m pip install --upgrade -r requirements.txt
