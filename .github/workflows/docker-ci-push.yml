@@ -27,7 +27,7 @@ jobs:
         run: cd wxpython && ./buildtools/install_depends.sh
       
       - name: Build wxpython Wheel
-        run: WXPYTHON_BUILD_ARGS="--release --jobs=$(nproc)" pip wheel -v wxpython*.tar.gz
+        run: WXPYTHON_BUILD_ARGS="--release" pip wheel -v wxpython*.tar.gz
 
       - name: Upload wxpython Wheel
         uses: actions/upload-artifact@v7
