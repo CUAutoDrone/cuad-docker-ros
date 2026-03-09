@@ -35,8 +35,8 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: wxpython-arm-wheel
-          path: *.whl
-      
+          path: ./*.whl
+
   docker-pr:
     needs: 
       - build-wxpython-arm-wheel
