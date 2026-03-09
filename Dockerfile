@@ -116,6 +116,8 @@ ARG AP_DOCKER_BUILD=1
 
 COPY --link *.whl /
 
+RUN ls /
+
 RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
     sudo mv /*.whl /home/user/.cache/pip/ || true
     
