@@ -114,7 +114,7 @@ ENV USER=user
 
 ARG AP_DOCKER_BUILD=1
 
-COPY --link *.whl /
+COPY *.whl /
 
 RUN ls /
 
