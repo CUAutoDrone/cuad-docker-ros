@@ -87,7 +87,7 @@ jobs:
           name: wxpython-arm-wheel
 
       - name: Check Current Directory
-        run: ls
+        run: ls -aF
 
       - name: Docker meta
         id: meta
