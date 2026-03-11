@@ -114,7 +114,7 @@ ENV USER=user
 
 ARG AP_DOCKER_BUILD=1
 
-COPY --link cwd://*.whl /
+COPY --link *.whl /
 
 RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
     sudo mv /*.whl /home/user/.cache/pip/ || true
