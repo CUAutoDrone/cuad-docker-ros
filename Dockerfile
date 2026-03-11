@@ -114,12 +114,10 @@ ENV USER=user
 
 ARG AP_DOCKER_BUILD=1
 
-COPY --link *.whl /home/user/
-
-RUN ls /home/user/
+COPY --link /home/runner/work/cuad-docker-ros/cuad-docker-ros/*.whl /
 
 RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
-    sudo mv /home/user/*.whl /home/user/.cache/pip/ || true
+    sudo mv /*.whl /home/user/.cache/pip/ || true
     
  RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
