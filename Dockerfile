@@ -116,12 +116,12 @@ ARG AP_DOCKER_BUILD=1
 
 COPY --link *.whl /
 
-RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
+RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip,uid=999 \
     sudo mv /*.whl /home/user/.cache/pip/ || true
     
  RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
-    --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
+    --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip,uid=999 \
     Tools/environment_install/install-prereqs-ubuntu.sh -y
 
 ARG AP_DOCKER_BUILD=0
@@ -134,7 +134,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo apt --no-install-recommends install -y python3-pip
 
-RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip \
+RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip,uid=999 \
     PATH=/home/user/venv-ardupilot/bin:$PATH pip install --upgrade pymavlink MAVProxy --user
 
 RUN PATH=/home/user/venv-ardupilot/bin:$PATH Tools/autotest/sim_vehicle.py -v copter --console --map -w
