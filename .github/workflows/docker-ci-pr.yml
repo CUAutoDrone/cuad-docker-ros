@@ -86,9 +86,6 @@ jobs:
         with:
           name: wxpython-arm-wheel
 
-      - name: Check Current Directory
-        run: ls -aF
-
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -109,10 +106,10 @@ jobs:
       - name: Build
         uses: docker/bake-action@v6
         with:
+          source: .
           files: |
             ./docker-bake.hcl
             cwd://${{ steps.meta.outputs.bake-file }}
-            cwd:///home/runner/work/cuad-docker-ros/cuad-docker-ros/*.whl
           targets: default
           set: |
             default.args.ROS_APT_SOURCE_VERSION=${{ env.ROS_APT_SOURCE_VERSION }}
