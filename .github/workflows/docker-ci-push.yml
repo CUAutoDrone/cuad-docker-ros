@@ -99,7 +99,7 @@ jobs:
           files: |
             ./docker-bake.hcl
             cwd://${{ steps.meta.outputs.bake-file }}
-            cwd://./*.whl
+            cwd:///home/runner/work/cuad-docker-ros/cuad-docker-ros/*.whl
           targets: default
           set: |
             default.args.ROS_APT_SOURCE_VERSION=${{ env.ROS_APT_SOURCE_VERSION }}
