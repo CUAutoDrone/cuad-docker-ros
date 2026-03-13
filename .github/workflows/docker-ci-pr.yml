@@ -129,7 +129,7 @@ jobs:
       - name: Scout AMD64
         uses: docker/scout-action@v1
         with: 
-          command: quickview,cves,recommendations
+          command: quickview,cves,recommendations,compare
           image: ghcr.io/cuautodrone/cuad-ros:test
           to: ghcr.io/cuautodrone/cuad-ros:latest
           platform: linux/amd64
@@ -138,7 +138,7 @@ jobs:
       - name: Scout ARM64
         uses: docker/scout-action@v1
         with: 
-          command: quickview,cves,recommendations
+          command: quickview,cves,recommendations,compare
           image: ghcr.io/cuautodrone/cuad-ros:test
           to: ghcr.io/cuautodrone/cuad-ros:latest
           platform: linux/arm64
