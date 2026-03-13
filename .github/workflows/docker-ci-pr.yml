@@ -11,8 +11,36 @@ env:
   TEST_NAME: ghcr.io/cuautodrone/cuad-ros:test
 
 jobs:
-  docker-pr:
+  build-wxpython-arm-wheel:
     if: ((github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]') || contains(github.event.pull_request.labels.*.name, 'run-ci-pr')) && !contains(github.event.pull_request.labels.*.name, 'pr-pull')
+    runs-on: ubuntu-24.04-arm
+    permissions: {}
+
+    steps:
+      - name: Download wxpython Tarball
+        run: pip download -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04 wxpython
+
+      - name: Extract Tarball
+        run: mkdir wxpython && tar xzf wxpython*.tar.gz -C wxpython --strip-components=1
+
+      - name: Install Python Dependencies
+        run: cd wxpython && python -m pip install --upgrade -r requirements.txt
+
+      - name: Install Ubuntu Dependencies
+        run: cd wxpython && ./buildtools/install_depends.sh
+      
+      - name: Build wxpython Wheel
+        run: WXPYTHON_BUILD_ARGS="--release" pip wheel -v wxpython*.tar.gz
+
+      - name: Upload wxpython Wheel
+        uses: actions/upload-artifact@v7
+        with:
+          name: wxpython-arm-wheel
+          path: ./*.whl
+
+  docker-pr:
+    needs: 
+      - build-wxpython-arm-wheel
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -53,6 +81,11 @@ jobs:
       - name: Get Git commit timestamps
         run: echo "TIMESTAMP=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
 
+      - name: Download wxpython Wheel
+        uses: actions/download-artifact@v8
+        with:
+          name: wxpython-arm-wheel
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -73,6 +106,7 @@ jobs:
       - name: Build
         uses: docker/bake-action@v6
         with:
+          source: .
           files: |
             ./docker-bake.hcl
             cwd://${{ steps.meta.outputs.bake-file }}
@@ -95,7 +129,7 @@ jobs:
       - name: Scout AMD64
         uses: docker/scout-action@v1
         with: 
-          command: quickview,cves,recommendations,compare
+          command: quickview,cves,recommendations
           image: ghcr.io/cuautodrone/cuad-ros:test
           to: ghcr.io/cuautodrone/cuad-ros:latest
           platform: linux/amd64
@@ -104,7 +138,7 @@ jobs:
       - name: Scout ARM64
         uses: docker/scout-action@v1
         with: 
-          command: quickview,cves,recommendations,compare
+          command: quickview,cves,recommendations
           image: ghcr.io/cuautodrone/cuad-ros:test
           to: ghcr.io/cuautodrone/cuad-ros:latest
           platform: linux/arm64

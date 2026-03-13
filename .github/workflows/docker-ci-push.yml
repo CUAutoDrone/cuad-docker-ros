@@ -9,7 +9,35 @@ env:
   IMAGE_NAME: ghcr.io/cuautodrone/cuad-ros:main
 
 jobs:
+  build-wxpython-arm-wheel:
+    runs-on: ubuntu-24.04-arm
+    permissions: {}
+
+    steps:
+      - name: Download wxpython Tarball
+        run: pip download -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04 wxpython
+
+      - name: Extract Tarball
+        run: mkdir wxpython && tar xzf wxpython*.tar.gz -C wxpython --strip-components=1
+
+      - name: Install Python Dependencies
+        run: cd wxpython && python -m pip install --upgrade -r requirements.txt
+
+      - name: Install Ubuntu Dependencies
+        run: cd wxpython && ./buildtools/install_depends.sh
+      
+      - name: Build wxpython Wheel
+        run: WXPYTHON_BUILD_ARGS="--release" pip wheel -v wxpython*.tar.gz
+
+      - name: Upload wxpython Wheel
+        uses: actions/upload-artifact@v7
+        with:
+          name: wxpython-arm-wheel
+          path: ./*.whl
+
   docker-push:
+    needs: 
+      - build-wxpython-arm-wheel
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -43,6 +71,11 @@ jobs:
       - name: Get Git commit timestamps
         run: echo "TIMESTAMP=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
 
+      - name: Download wxpython Wheel
+        uses: actions/download-artifact@v8
+        with:
+          name: wxpython-arm-wheel
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -63,6 +96,7 @@ jobs:
       - name: Build
         uses: docker/bake-action@v6
         with:
+          source: .
           files: |
             ./docker-bake.hcl
             cwd://${{ steps.meta.outputs.bake-file }}
