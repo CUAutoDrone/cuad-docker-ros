@@ -125,7 +125,7 @@ RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip,
  RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip,uid=999 \
-    Tools/environment_install/install-prereqs-ubuntu.sh -y
+    PIP_FIND_LINKS="/home/user/.cache/pip" Tools/environment_install/install-prereqs-ubuntu.sh -y
 
 ARG AP_DOCKER_BUILD=0
 
