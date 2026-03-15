@@ -90,7 +90,7 @@ jobs:
         run: echo "ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}')" >> $GITHUB_ENV
 
       - name: Validate Build Configuration
-        uses: docker/bake-action@v6
+        uses: docker/bake-action@v7
         with:
           targets: validate-build
           set: "default.args.ROS_APT_SOURCE_VERSION=${{ env.ROS_APT_SOURCE_VERSION }}"
@@ -98,7 +98,7 @@ jobs:
           SOURCE_DATE_EPOCH: ${{ env.TIMESTAMP }}
 
       - name: Build
-        uses: docker/bake-action@v6
+        uses: docker/bake-action@v7
         with:
           source: .
           files: |
