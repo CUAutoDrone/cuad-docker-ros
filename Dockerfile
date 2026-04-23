@@ -130,6 +130,15 @@ RUN . ~/.profile
 
 ENV PATH=/home/user/.local/bin:$PATH
 
+RUN find . -name .git -type f | rev | cut -c 6- | rev | xargs -I {} git -C {} remote prune origin && \
+    find . -name .git -type f | rev | cut -c 6- | rev | xargs -I {} git -C {} fsck --full && \
+    find . -name .git -type f | rev | cut -c 6- | rev | xargs -I {} git -C {} maintenance run && \
+    find . -name .git -type f | rev | cut -c 6- | rev | xargs -I {} git -C {} gc --aggressive --prune && \
+    find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} git -C {} remote prune origin && \
+    find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} git -C {} fsck --full && \
+    find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} git -C {} maintenance run && \
+    find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} git -C {} gc --aggressive --prune
+
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo apt --no-install-recommends install -y python3-pip
@@ -168,6 +177,13 @@ ENV GZ_SIM_RESOURCE_PATH=/gz_ws/src/ardupilot_gazebo/models:/gz_ws/src/ardupilot
 RUN PATH=/home/user/venv-ardupilot/bin:$PATH gz sim -v4 -r iris_runway.sdf
 
 RUN PATH=/home/user/venv-ardupilot/bin:$PATH /ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON --map --console
+
+WORKDIR /gz_ws/src/ardupilot_gazebo
+
+RUN find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} git -C {} remote prune origin && \
+    find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} git -C {} fsck --full && \
+    find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} git -C {} maintenance run && \
+    find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} git -C {} gc --aggressive --prune
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
