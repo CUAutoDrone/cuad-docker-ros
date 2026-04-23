@@ -180,7 +180,11 @@ RUN PATH=/home/user/venv-ardupilot/bin:$PATH /ardupilot/Tools/autotest/sim_vehic
 
 WORKDIR /gz_ws/src/ardupilot_gazebo
 
-RUN sudo find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} sudo git -C {} remote prune origin && \
+RUN sudo find . -name .git -type f | rev | cut -c 6- | rev | xargs -I {} sudo git -C {} remote prune origin && \
+    sudo find . -name .git -type f | rev | cut -c 6- | rev | xargs -I {} sudo git -C {} fsck --full && \
+    sudo find . -name .git -type f | rev | cut -c 6- | rev | xargs -I {} sudo git -C {} maintenance run && \
+    sudo find . -name .git -type f | rev | cut -c 6- | rev | xargs -I {} sudo git -C {} gc --aggressive --prune && \
+    sudo find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} sudo git -C {} remote prune origin && \
     sudo find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} sudo git -C {} fsck --full && \
     sudo find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} sudo git -C {} maintenance run && \
     sudo find . -name .git -type d | rev | cut -c 6- | rev | xargs -I {} sudo git -C {} gc --aggressive --prune
