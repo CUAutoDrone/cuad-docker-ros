@@ -1,5 +1,5 @@
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
-FROM ubuntu:24.04 AS main
+FROM ubuntu:26.04 AS main
 
 LABEL name="cuad-ros"
 LABEL org.opencontainers.image.authors="cuautodrone"
