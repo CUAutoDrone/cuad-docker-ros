@@ -6,6 +6,8 @@ LABEL org.opencontainers.image.authors="cuautodrone"
 
 SHELL ["/bin/bash", "-c"]
 
+ENV SHELL=/bin/bash
+
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 
 ARG TARGETARCH
