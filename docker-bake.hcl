@@ -6,7 +6,7 @@ target "default" {
         "GZ_SIM_SYSTEM_PLUGIN_PATH" = null
     }
     cache-from = [ "type=gha" ]
-    cache-to = [ "type=gha,mode=max" ]
+    cache-to = [ "type=gha,mode=max,ignore-error=true" ]
     attest = [
         {
             type="provenance"
