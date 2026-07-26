@@ -20,26 +20,26 @@ jobs:
           security-events: write
         steps:
             - name: Login to Docker Hub
-              uses: docker/login-action@v4
+              uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
               with:
                 username: ${{ secrets.DOCKERHUB_USERNAME }}
                 password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
             - name: Login to GitHub Container Registry
-              uses: docker/login-action@v4
+              uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
               with:
                 registry: ghcr.io
                 username: ${{ github.repository_owner }}
                 password: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Set Up QEMU
-              uses: docker/setup-qemu-action@v4
+              uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
 
             - name: Set Up Docker Buildx
-              uses: docker/setup-buildx-action@v4
+              uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
 
             - name: Checkout Repo
-              uses: actions/checkout@v7
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                 ref: ${{ github.event.pull_request.head.ref }}
 
@@ -50,7 +50,7 @@ jobs:
                 ghcr.io/cuautodrone/cuad-ros:test
 
             - name: Scout AMD64
-              uses: docker/scout-action@v1
+              uses: docker/scout-action@2688993af7bafd6ba8c6a74ec652442be91dd82b # v1.23.1
               with: 
                 command: quickview,cves,recommendations
                 image: ghcr.io/cuautodrone/cuad-ros:latest
@@ -60,13 +60,13 @@ jobs:
 
             - name: Upload SARIF Results AMD64
               id: upload-sarif-amd64
-              uses: github/codeql-action/upload-sarif@v4
+              uses: github/codeql-action/upload-sarif@e0647621c2984b5ed2f768cb892365bf2a616ad1 # v4.37.2
               with:
                 sarif_file: sarif.output.json
                 category: amd64
 
             - name: Scout ARM64
-              uses: docker/scout-action@v1
+              uses: docker/scout-action@2688993af7bafd6ba8c6a74ec652442be91dd82b # v1.23.1
               with: 
                 command: quickview,cves,recommendations
                 image: ghcr.io/cuautodrone/cuad-ros:latest
@@ -76,7 +76,7 @@ jobs:
 
             - name: Upload SARIF Results ARM64
               id: upload-sarif-arm64
-              uses: github/codeql-action/upload-sarif@v4
+              uses: github/codeql-action/upload-sarif@e0647621c2984b5ed2f768cb892365bf2a616ad1 # v4.37.2
               with:
                 sarif_file: sarif.output.json
                 category: arm64
