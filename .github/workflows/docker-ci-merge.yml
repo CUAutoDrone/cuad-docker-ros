@@ -68,7 +68,7 @@ jobs:
             - name: Scout ARM64
               uses: docker/scout-action@v1
               with: 
-                command: quickview,cves,recommendations
+                command: quickview,recommendations
                 image: ghcr.io/cuautodrone/cuad-ros:latest
                 platform: linux/arm64
                 sarif-file: sarif.output.json
