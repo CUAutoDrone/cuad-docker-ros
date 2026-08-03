@@ -121,7 +121,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Scout AMD64
-        uses: docker/scout-action@2688993af7bafd6ba8c6a74ec652442be91dd82b # v1.23.1
+        uses: docker/scout-action@7c6b6c3f7844478ace1ffd4e7aef649053d1f87d # v1.24.0
         with: 
           command: quickview,cves,recommendations,compare
           image: ghcr.io/cuautodrone/cuad-ros:test
@@ -130,7 +130,7 @@ jobs:
           only-fixed: true
 
       - name: Scout ARM64
-        uses: docker/scout-action@2688993af7bafd6ba8c6a74ec652442be91dd82b # v1.23.1
+        uses: docker/scout-action@7c6b6c3f7844478ace1ffd4e7aef649053d1f87d # v1.24.0
         with: 
           command: quickview,cves,recommendations,compare
           image: ghcr.io/cuautodrone/cuad-ros:test
