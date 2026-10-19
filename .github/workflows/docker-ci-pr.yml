@@ -19,7 +19,7 @@ jobs:
         run: mkdir wxpython && tar xzf wxpython*.tar.gz -C wxpython --strip-components=1
 
       - name: Install Python Dependencies
-        run: cd wxpython && python -m pip install --upgrade --dependency-group codegen
+        run: cd wxpython && python -m pip install --upgrade pip && python -m pip install --upgrade --group codegen
 
       - name: Install Ubuntu Dependencies
         run: cd wxpython && ./buildtools/install_depends.sh
