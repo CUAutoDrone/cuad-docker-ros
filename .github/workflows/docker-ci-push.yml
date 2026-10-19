@@ -21,13 +21,17 @@ jobs:
         run: mkdir wxpython && tar xzf wxpython*.tar.gz -C wxpython --strip-components=1
 
       - name: Install Python Dependencies
-        run: cd wxpython && python -m pip install --upgrade -r requirements.txt
+        run: cd wxpython && python -m pip install --upgrade --group codegen
 
       - name: Install Ubuntu Dependencies
         run: cd wxpython && ./buildtools/install_depends.sh
       
       - name: Build wxpython Wheel
-        run: WXPYTHON_BUILD_ARGS="--release" pip wheel -v wxpython*.tar.gz
+        run: |
+          mkdir wxpython-src
+          tar xzf wxpython*.tar.gz -C wxpython-src --strip-components=1
+          pip install build
+          WXPYTHON_BUILD_ARGS="--release" python -m build --wheel --verbose --outdir . ./wxpython-src
 
       - name: Upload wxpython Wheel
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
