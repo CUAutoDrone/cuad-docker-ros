@@ -1,9 +1,7 @@
 name: ci-merge
 
 on:
-    pull_request_target:
-        types:
-            - labeled
+    workflow_dispatch
 
 env:
     IMAGE_NAME: ghcr.io/cuautodrone/cuad-ros
@@ -11,7 +9,6 @@ env:
 
 jobs:
     docker-merge:
-        if: contains(github.event.pull_request.labels.*.name, 'pr-pull') && ((github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]') || contains(github.event.pull_request.labels.*.name, 'run-ci-pr'))
         runs-on: ubuntu-latest
         permissions:
           contents: write
@@ -40,8 +37,6 @@ jobs:
 
             - name: Checkout Repo
               uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-              with:
-                ref: ${{ github.event.pull_request.head.ref }}
 
             - name: Push Image to GitHub Container Registry
               run: |
