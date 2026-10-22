@@ -49,6 +49,7 @@ jobs:
                 command: quickview,cves,recommendations
                 image: ghcr.io/cuautodrone/cuad-ros:latest
                 platform: linux/amd64
+                sarif-file: sarif.amd64.output.json
                 only-fixed: true
 
             - name: Scout ARM64
@@ -57,7 +58,32 @@ jobs:
                 command: quickview,cves,recommendations
                 image: ghcr.io/cuautodrone/cuad-ros:latest
                 platform: linux/arm64
+                sarif-file: sarif.arm64.output.json
                 only-fixed: true
 
             - name: Merge PR
               run: git pull --all && gh pr merge -md
+
+            - name: Get Branch Info
+              id: branch-info
+              run: |
+                echo "ref=$(git symbolic-ref HEAD)" >>${GITHUB_OUTPUT}
+                echo "sha=$(git rev-parse HEAD)" >>${GITHUB_OUTPUT}
+
+            - name: Upload SARIF Results AMD64
+              id: upload-sarif-amd64
+              uses: github/codeql-action/upload-sarif@e0647621c2984b5ed2f768cb892365bf2a616ad1 # v4.37.2
+              with:
+                sarif_file: sarif.amd64.output.json
+                category: amd64
+                ref: ${{ steps.branch-info.outputs.ref }}
+                sha: ${{ steps.branch-info.outputs.sha }}
+
+            - name: Upload SARIF Results ARM64
+              id: upload-sarif-arm64
+              uses: github/codeql-action/upload-sarif@e0647621c2984b5ed2f768cb892365bf2a616ad1 # v4.37.2
+              with:
+                sarif_file: sarif.arm64.output.json
+                category: arm64
+                ref: ${{ steps.branch-info.outputs.ref }}
+                sha: ${{ steps.branch-info.outputs.sha }}
