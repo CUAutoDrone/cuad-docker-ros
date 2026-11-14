@@ -39,7 +39,7 @@ jobs:
       - name: Upload wxpython Wheel
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: wxpython-${{ env.RUNNER_ARCH }}-wheel
+          name: wxpython-${{ runner.arch }}-wheel
           path: ./wxpython*.whl
 
   docker-push:
