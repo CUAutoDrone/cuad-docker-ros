@@ -202,7 +202,7 @@ ADD --keep-git-dir=true --link https://github.com/isaac-sim/IsaacLab.git#v3.0.0 
 
 WORKDIR /IssacLab
 
-RUN ./isaaclab.sh -i
+RUN PATH=/home/user/venv-ardupilot/bin:$PATH ./isaaclab.sh -i
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
