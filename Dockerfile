@@ -198,7 +198,7 @@ ENV OMNI_KIT_ACCEPT_EULA=YES
 
 RUN PATH=/home/user/venv-ardupilot/bin:$PATH python3 -c "import isaacsim"
 
-ADD --keep-git-dir=true --link https://github.com/isaac-sim/IsaacLab.git#v3.0.0 /IssacLab
+ADD --keep-git-dir=true --chown=999 --link https://github.com/isaac-sim/IsaacLab.git#v3.0.0 /IssacLab
 
 WORKDIR /IssacLab
 
