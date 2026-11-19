@@ -47,9 +47,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     apt-get update && apt --no-install-recommends install -y curl
 
-ARG ROS_APT_SOURCE_VERSION
-
-RUN curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo ${UBUNTU_CODENAME:-${VERSION_CODENAME}})_all.deb"
+RUN curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}')/ros2-apt-source_$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}').$(. /etc/os-release && echo ${UBUNTU_CODENAME:-${VERSION_CODENAME}})_all.deb"
 
 RUN dpkg -i /tmp/ros2-apt-source.deb && rm /tmp/ros2-apt-source.deb
 
@@ -115,16 +113,11 @@ RUN source /opt/ros/jazzy/setup.bash
 ENV USER=user
 
 ARG AP_DOCKER_BUILD=1
-
-COPY --link *.whl /
-
-RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip,uid=999 \
-    sudo mv /*.whl /home/user/.cache/pip/ || true
     
  RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip,uid=999 \
-    PIP_FIND_LINKS="/home/user/.cache/pip" Tools/environment_install/install-prereqs-ubuntu.sh -y
+    Tools/environment_install/install-prereqs-ubuntu.sh -y
 
 ARG AP_DOCKER_BUILD=0
 
