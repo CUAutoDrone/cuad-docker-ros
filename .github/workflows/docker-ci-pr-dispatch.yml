@@ -51,6 +51,11 @@ jobs:
       meta-images: ghcr.io/cuautodrone/cuad-ros:test
       set: |
         default.tags=ghcr.io/cuautodrone/cuad-ros:test
+    secrets:
+      registry-auths: |
+        - registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
   docker-pr-scout:
     needs: 
