@@ -44,8 +44,6 @@ jobs:
       cache: true
       cache-mode: max
       output: image
-      push: true
-      sbom: true
       source-date-epoch: commit
       target: default
       set-meta-annotations: true
