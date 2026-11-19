@@ -25,6 +25,7 @@ jobs:
       target: validate-build
       set-meta-annotations: true
       set-meta-labels: true
+      meta-images: ghcr.io/cuautodrone/cuad-ros:main
       set: |
         default.tags=ghcr.io/cuautodrone/cuad-ros:main
 
@@ -49,6 +50,7 @@ jobs:
       target: default
       set-meta-annotations: true
       set-meta-labels: true
+      meta-images: ghcr.io/cuautodrone/cuad-ros:main
       set: |
         default.tags=ghcr.io/cuautodrone/cuad-ros:main
 
