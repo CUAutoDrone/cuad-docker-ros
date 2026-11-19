@@ -4,10 +4,6 @@ on:
     workflow_dispatch:
 
 
-env:
-  IMAGE_NAME: ghcr.io/cuautodrone/cuad-ros:latest
-  TEST_NAME: ghcr.io/cuautodrone/cuad-ros:test
-
 jobs:
 
   docker-pr-validate:
@@ -30,7 +26,7 @@ jobs:
       set-meta-annotations: true
       set-meta-labels: true
       set: |
-        default.tags=${{ env.TEST_NAME }}
+        default.tags=ghcr.io/cuautodrone/cuad-ros:test
 
   docker-pr:
     uses: docker/github-builder/.github/workflows/bake.yml@v1
@@ -52,9 +48,9 @@ jobs:
       set-meta-annotations: true
       set-meta-labels: true
       set: |
-        default.tags=${{ env.TEST_NAME }}
+        default.tags=ghcr.io/cuautodrone/cuad-ros:test
 
-  docker-scout:
+  docker-pr-scout:
     runs-on: ubuntu-latest
     permissions:
       contents: read

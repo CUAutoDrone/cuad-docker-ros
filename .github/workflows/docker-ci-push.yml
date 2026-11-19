@@ -5,11 +5,8 @@ on:
     branches:
       - main
 
-env:
-  IMAGE_NAME: ghcr.io/cuautodrone/cuad-ros:main
-
 jobs:
-  docker-pr-validate:
+  docker-push-validate:
     uses: docker/github-builder/.github/workflows/bake.yml@v1
     permissions:
       contents: read
@@ -29,9 +26,9 @@ jobs:
       set-meta-annotations: true
       set-meta-labels: true
       set: |
-        default.tags=${{ env.IMAGE_NAME }}
+        default.tags=ghcr.io/cuautodrone/cuad-ros:main
 
-  docker-pr:
+  docker-push:
     uses: docker/github-builder/.github/workflows/bake.yml@v1
     permissions:
       contents: read
@@ -51,9 +48,9 @@ jobs:
       set-meta-annotations: true
       set-meta-labels: true
       set: |
-        default.tags=${{ env.IMAGE_NAME }}
+        default.tags=ghcr.io/cuautodrone/cuad-ros:main
 
-  docker-scout:
+  docker-push-scout:
     runs-on: ubuntu-latest
     permissions:
       contents: read
