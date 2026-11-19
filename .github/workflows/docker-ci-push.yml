@@ -29,6 +29,8 @@ jobs:
         default.tags=ghcr.io/cuautodrone/cuad-ros:main
 
   docker-push:
+    needs: 
+      - docker-push-validate
     uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1
     permissions:
       contents: read
@@ -51,6 +53,8 @@ jobs:
         default.tags=ghcr.io/cuautodrone/cuad-ros:main
 
   docker-push-scout:
+    needs: 
+      - docker-push
     runs-on: ubuntu-latest
     permissions:
       contents: read
