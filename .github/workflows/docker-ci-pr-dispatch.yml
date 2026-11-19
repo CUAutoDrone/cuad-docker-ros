@@ -7,7 +7,7 @@ on:
 jobs:
 
   docker-pr-validate:
-    uses: docker/github-builder/.github/workflows/bake.yml@v1
+    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1
     permissions:
       contents: read
       packages: write
@@ -29,7 +29,7 @@ jobs:
         default.tags=ghcr.io/cuautodrone/cuad-ros:test
 
   docker-pr:
-    uses: docker/github-builder/.github/workflows/bake.yml@v1
+    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1
     permissions:
       contents: read
       packages: write
