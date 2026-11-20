@@ -186,6 +186,19 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y ros-jazzy-mavros ros-jazzy-mavros-extras
 
+RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip,uid=999 \
+    PATH=/home/user/venv-ardupilot/bin:$PATH pip install isaacsim[all,extscache,ros2]==6.2.0.0 --extra-index-url https://pypi.nvidia.com
+
+ENV OMNI_KIT_ACCEPT_EULA=YES
+
+RUN PATH=/home/user/venv-ardupilot/bin:$PATH python3 -c "import isaacsim"
+
+ADD --keep-git-dir=true --chown=999 --link https://github.com/isaac-sim/IsaacLab.git#v3.0.0 /IssacLab
+
+WORKDIR /IssacLab
+
+RUN PATH=/home/user/venv-ardupilot/bin:$PATH ./isaaclab.sh -i
+
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGETARCH-$TARGETVARIANT \
     --mount=type=cache,target=/var/lib/apt,sharing=locked,id=lib-apt-$TARGETARCH-$TARGETVARIANT \
     sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y xpra
