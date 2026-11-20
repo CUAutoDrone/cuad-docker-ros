@@ -6,7 +6,18 @@ on:
 
 jobs:
 
+  get-ros-apt-source-version:
+    runs-on: ubuntu-latest
+    outputs:
+      ros-apt-source-version: ${{ steps.get-ros-apt-source-version.outputs.ROS_APT_SOURCE_VERSION }}
+    steps:
+      - name: Get ROS Apt Source Version
+        id: get-ros-apt-source-version
+        run: echo "ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}')" >> $GITHUB_OUTPUT
+  
   docker-pr-validate:
+    needs:
+      - get-ros-apt-source-version
     uses: docker/github-builder/.github/workflows/bake.yml@02ccc51e26beaa9507db1f2a0103f3d9c8c1c16a # v1
     permissions:
       contents: read
@@ -25,9 +36,11 @@ jobs:
       set-meta-labels: true
       meta-images: ghcr.io/cuautodrone/cuad-ros
       meta-tags: test
+      set: default.args.ROS_APT_SOURCE_VERSION=${{ needs.get-ros-apt-source-version.outputs.ros-apt-source-version }}
 
   docker-pr:
     needs: 
+      - get-ros-apt-source-version
       - docker-pr-validate
     uses: docker/github-builder/.github/workflows/bake.yml@02ccc51e26beaa9507db1f2a0103f3d9c8c1c16a # v1
     permissions:
@@ -49,6 +62,7 @@ jobs:
       set-meta-labels: true
       meta-images: ghcr.io/cuautodrone/cuad-ros
       meta-tags: test
+      set: default.args.ROS_APT_SOURCE_VERSION=${{ needs.get-ros-apt-source-version.outputs.ros-apt-source-version }}
     secrets:
       registry-auths: |
         - registry: ghcr.io
