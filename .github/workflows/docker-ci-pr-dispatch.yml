@@ -6,19 +6,29 @@ on:
 
 jobs:
 
-  get-ros-apt-source-version:
+  preset-variables:
     runs-on: ubuntu-latest
     permissions: {}
     outputs:
+      image-name : ${{ steps.preset-env-vars.outputs.IMAGE_NAME }}
+      latest-tag : ${{ steps.preset-env-vars.outputs.LATEST_TAG }}
+      test-tag : ${{ steps.preset-env-vars.outputs.TEST_TAG }}
       ros-apt-source-version: ${{ steps.get-ros-apt-source-version.outputs.ROS_APT_SOURCE_VERSION }}
     steps:
+      - name: Preset Environment Variables
+        id: preset-env-vars
+        run: |
+          echo "IMAGE_NAME=ghcr.io/cuautodrone/cuad-ros" >> $GITHUB_OUTPUT
+          echo "LATEST_TAG=latest" >> $GITHUB_OUTPUT
+          echo "TEST_TAG=test" >> $GITHUB_OUTPUT
+
       - name: Get ROS Apt Source Version
         id: get-ros-apt-source-version
         run: echo "ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}')" >> $GITHUB_OUTPUT
   
   docker-pr-validate:
     needs:
-      - get-ros-apt-source-version
+      - preset-variables
     uses: docker/github-builder/.github/workflows/bake.yml@02ccc51e26beaa9507db1f2a0103f3d9c8c1c16a # v1
     permissions:
       contents: read
@@ -35,13 +45,13 @@ jobs:
       target: validate-build
       set-meta-annotations: true
       set-meta-labels: true
-      meta-images: ghcr.io/cuautodrone/cuad-ros
-      meta-tags: test
-      set: default.args.ROS_APT_SOURCE_VERSION=${{ needs.get-ros-apt-source-version.outputs.ros-apt-source-version }}
+      meta-images: ${{ needs.preset-variables.outputs.image-name }}
+      meta-tags: ${{ needs.preset-variables.outputs.test-tag }}
+      set: default.args.ROS_APT_SOURCE_VERSION=${{ needs.preset-variables.outputs.ros-apt-source-version }}
 
   docker-pr:
     needs: 
-      - get-ros-apt-source-version
+      - preset-variables
       - docker-pr-validate
     uses: docker/github-builder/.github/workflows/bake.yml@02ccc51e26beaa9507db1f2a0103f3d9c8c1c16a # v1
     permissions:
@@ -61,9 +71,9 @@ jobs:
       target: default
       set-meta-annotations: true
       set-meta-labels: true
-      meta-images: ghcr.io/cuautodrone/cuad-ros
-      meta-tags: test
-      set: default.args.ROS_APT_SOURCE_VERSION=${{ needs.get-ros-apt-source-version.outputs.ros-apt-source-version }}
+      meta-images: ${{ needs.preset-variables.outputs.image-name }}
+      meta-tags: ${{ needs.preset-variables.outputs.test-tag }}
+      set: default.args.ROS_APT_SOURCE_VERSION=${{ needs.preset-variables.outputs.ros-apt-source-version }}
     secrets:
       registry-auths: |
         - registry: ghcr.io
@@ -72,6 +82,7 @@ jobs:
 
   docker-pr-scout:
     needs: 
+      - preset-variables
       - docker-pr
     runs-on: ubuntu-latest
     permissions:
@@ -100,8 +111,8 @@ jobs:
         uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
         with: 
           command: quickview,cves,recommendations,compare
-          image: ghcr.io/cuautodrone/cuad-ros:test
-          to: ghcr.io/cuautodrone/cuad-ros:latest
+          image: ${{ needs.preset-variables.outputs.image-name }}:${{ needs.preset-variables.outputs.test-tag }}
+          to: ${{ needs.preset-variables.outputs.image-name }}:${{ needs.preset-variables.outputs.latest-tag }}
           platform: linux/amd64
           only-fixed: true
 
@@ -109,7 +120,7 @@ jobs:
         uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
         with: 
           command: quickview,cves,recommendations,compare
-          image: ghcr.io/cuautodrone/cuad-ros:test
-          to: ghcr.io/cuautodrone/cuad-ros:latest
+          image: ${{ needs.preset-variables.outputs.image-name }}:${{ needs.preset-variables.outputs.test-tag }}
+          to: ${{ needs.preset-variables.outputs.image-name }}:${{ needs.preset-variables.outputs.latest-tag }}
           platform: linux/arm64
           only-fixed: true
