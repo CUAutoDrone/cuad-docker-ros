@@ -8,6 +8,7 @@ on:
 jobs:
   get-ros-apt-source-version:
     runs-on: ubuntu-latest
+    permissions: {}
     outputs:
       ros-apt-source-version: ${{ steps.get-ros-apt-source-version.outputs.ROS_APT_SOURCE_VERSION }}
     steps:
