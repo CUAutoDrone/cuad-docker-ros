@@ -25,9 +25,8 @@ jobs:
       target: validate-build
       set-meta-annotations: true
       set-meta-labels: true
-      meta-images: ghcr.io/cuautodrone/cuad-ros:main
-      set: |
-        default.tags=ghcr.io/cuautodrone/cuad-ros:main
+      meta-images: ghcr.io/cuautodrone/cuad-ros
+      meta-tags: main
 
   docker-push:
     needs: 
@@ -48,9 +47,8 @@ jobs:
       target: default
       set-meta-annotations: true
       set-meta-labels: true
-      meta-images: ghcr.io/cuautodrone/cuad-ros:main
-      set: |
-        default.tags=ghcr.io/cuautodrone/cuad-ros:main
+      meta-images: ghcr.io/cuautodrone/cuad-ros
+      meta-tags: main
     secrets:
       registry-auths: |
         - registry: ghcr.io
