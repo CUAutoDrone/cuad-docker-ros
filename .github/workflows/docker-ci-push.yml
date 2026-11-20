@@ -5,59 +5,89 @@ on:
     branches:
       - main
 
-env:
-  IMAGE_NAME: ghcr.io/cuautodrone/cuad-ros:main
-
 jobs:
-  build-wxpython-wheels:
-    strategy:
-      matrix:
-        os: [ ubuntu-24.04, ubuntu-24.04-arm ]
-    runs-on: ${{ matrix.os }}
-    permissions: {}
-
-    steps:
-      - name: Download wxpython Tarball
-        run: pip download -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-24.04 wxpython
-
-      - name: Extract Tarball
-        run: mkdir wxpython && tar xzf wxpython*.tar.gz -C wxpython --strip-components=1
-
-      - name: Install Python Dependencies
-        run: cd wxpython && python -m pip install --upgrade pip && python -m pip install --upgrade --group codegen
-
-      - name: Install Ubuntu Dependencies
-        run: cd wxpython && ./buildtools/install_depends.sh
-      
-      - name: Build wxpython Wheel
-        run: |
-          mkdir wxpython-src
-          tar xzf wxpython*.tar.gz -C wxpython-src --strip-components=1
-          pip install build
-          WXPYTHON_BUILD_ARGS="--release" python -m build --wheel --verbose --outdir . ./wxpython-src
-
-      - name: Upload wxpython Wheel
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: wxpython-${{ runner.arch }}-wheel
-          path: ./wxpython*.whl
-
-  docker-push:
-    needs: 
-      - build-wxpython-wheels
+  preset-variables:
     runs-on: ubuntu-latest
+    permissions: {}
+    outputs:
+      image-name: ${{ steps.preset-env-vars.outputs.IMAGE_NAME }}
+      latest-tag: ${{ steps.preset-env-vars.outputs.LATEST_TAG }}
+      main-tag: ${{ steps.preset-env-vars.outputs.MAIN_TAG }}
+      ros-apt-source-version: ${{ steps.get-ros-apt-source-version.outputs.ROS_APT_SOURCE_VERSION }}
+    steps:
+      - name: Preset Environment Variables
+        id: preset-env-vars
+        run: |
+          echo "IMAGE_NAME=ghcr.io/cuautodrone/cuad-ros" >> $GITHUB_OUTPUT
+          echo "LATEST_TAG=latest" >> $GITHUB_OUTPUT
+          echo "MAIN_TAG=main" >> $GITHUB_OUTPUT
+
+      - name: Get ROS Apt Source Version
+        id: get-ros-apt-source-version
+        run: echo "ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}')" >> $GITHUB_OUTPUT
+
+  docker-push-validate:
+    needs:
+      - preset-variables
+    uses: docker/github-builder/.github/workflows/bake.yml@02ccc51e26beaa9507db1f2a0103f3d9c8c1c16a # v1
     permissions:
       contents: read
       packages: write
-    steps:
-      - name: Free Up Space
-        uses: jlumbroso/free-disk-space@ceedf095f4ec1a097402bc6bd80831f2e1a6fde6 # v2.0.0
-        with:
-          docker-images: false
-          
-      - name: Clean Old Package Config
-        run: sudo apt purge -y '~c'
+      id-token: write
+    with:
+      runner: |
+        default=ubuntu-latest
+        linux/arm64=ubuntu-26.04-arm
+      cache: true
+      cache-mode: max
+      output: image
+      push: true
+      sbom: true
+      source-date-epoch: commit
+      target: validate-build
+      set-meta-annotations: true
+      set-meta-labels: true
+      meta-images: ${{ needs.preset-variables.outputs.image-name }}
+      meta-tags: ${{ needs.preset-variables.outputs.main-tag }}
+      set: default.args.ROS_APT_SOURCE_VERSION=${{ needs.preset-variables.outputs.ros-apt-source-version }}
 
+  docker-push:
+    needs: 
+      - preset-variables
+      - docker-push-validate
+    uses: docker/github-builder/.github/workflows/bake.yml@02ccc51e26beaa9507db1f2a0103f3d9c8c1c16a # v1
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    with:
+      runner: |
+        default=ubuntu-latest
+        linux/arm64=ubuntu-26.04-arm
+      cache: true
+      cache-mode: max
+      output: image
+      source-date-epoch: commit
+      target: default
+      set-meta-annotations: true
+      set-meta-labels: true
+      meta-images: ${{ needs.preset-variables.outputs.image-name }}
+      meta-tags: ${{ needs.preset-variables.outputs.main-tag }}
+      set: default.args.ROS_APT_SOURCE_VERSION=${{ needs.preset-variables.outputs.ros-apt-source-version }}
+    secrets:
+      registry-auths: |
+        - registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+  docker-push-scout:
+    needs: 
+      - preset-variables
+      - docker-push
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+    steps:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
@@ -71,56 +101,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
-      - name: Checkout Repo
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Get Git commit timestamps
-        run: echo "TIMESTAMP=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
-
-      - name: Download wxpython X64 Wheel
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: wxpython-X64-wheel
-
-      - name: Download wxpython ARM64 Wheel
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: wxpython-ARM64-wheel
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
-        with:
-          images: ${{ env.IMAGE_NAME }}
-
-      - name: Get ROS Apt Source Version
-        run: echo "ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}')" >> $GITHUB_ENV
-
-      - name: Validate Build Configuration
-        uses: docker/bake-action@59cb1203cd42bcefd40a1b6d73b589e48c86040e # v7.5.0
-        with:
-          targets: validate-build
-          set: "default.args.ROS_APT_SOURCE_VERSION=${{ env.ROS_APT_SOURCE_VERSION }}"
-        env:
-          SOURCE_DATE_EPOCH: ${{ env.TIMESTAMP }}
-
-      - name: Build
-        uses: docker/bake-action@59cb1203cd42bcefd40a1b6d73b589e48c86040e # v7.5.0
-        with:
-          source: .
-          files: |
-            ./docker-bake.hcl
-            cwd://${{ steps.meta.outputs.bake-file }}
-          targets: default
-          set: |
-            default.args.ROS_APT_SOURCE_VERSION=${{ env.ROS_APT_SOURCE_VERSION }}
-            default.tags=${{ env.IMAGE_NAME }}
-          push: true
-          provenance: true
-          sbom: true
-        env:
-          SOURCE_DATE_EPOCH: ${{ env.TIMESTAMP }}
-
       - name: Login to Docker Hub
         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
@@ -131,8 +111,8 @@ jobs:
         uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
         with: 
           command: quickview,cves,recommendations,compare
-          image: ghcr.io/cuautodrone/cuad-ros:main
-          to: ghcr.io/cuautodrone/cuad-ros:latest
+          image: ${{ needs.preset-variables.outputs.image-name }}:${{ needs.preset-variables.outputs.main-tag }}
+          to: ${{ needs.preset-variables.outputs.image-name }}:${{ needs.preset-variables.outputs.latest-tag }}
           platform: linux/amd64
           only-fixed: true
 
@@ -140,7 +120,7 @@ jobs:
         uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
         with: 
           command: quickview,cves,recommendations,compare
-          image: ghcr.io/cuautodrone/cuad-ros:main
-          to: ghcr.io/cuautodrone/cuad-ros:latest
+          image: ${{ needs.preset-variables.outputs.image-name }}:${{ needs.preset-variables.outputs.main-tag }}
+          to: ${{ needs.preset-variables.outputs.image-name }}:${{ needs.preset-variables.outputs.latest-tag }}
           platform: linux/arm64
           only-fixed: true
