@@ -32,6 +32,7 @@ jobs:
     uses: docker/github-builder/.github/workflows/bake.yml@02ccc51e26beaa9507db1f2a0103f3d9c8c1c16a # v1
     permissions:
       contents: read
+      packages: write
       id-token: write
     with:
       runner: |
