@@ -206,8 +206,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
 
 RUN sudo chown -R user:sudo /home/user
 
-RUN sudo chmod -R 750 /home/user
-
 RUN sudo rm -rf /var/lib/apt/lists/* /var/cache/apt/* /home/user/.cache/pip
 
 RUN sudo rm /etc/apt/apt.conf.d/01overrides
