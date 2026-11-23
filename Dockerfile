@@ -195,7 +195,9 @@ ENV OMNI_KIT_ACCEPT_EULA=YES
 
 ARG TARGETARCH
 
-ENV LD_PRELOAD=${${TARGETARCH#amd64}:+"/lib/aarch64-linux-gnu/libgomp.so.1"}
+ARG TARGETARCH2=${TARGETARCH#amd64}
+
+ENV LD_PRELOAD=${TARGETARCH2:+"/lib/aarch64-linux-gnu/libgomp.so.1"}
 
 RUN PATH=/home/user/venv-ardupilot/bin:$PATH python3 -c "import isaacsim"
 
