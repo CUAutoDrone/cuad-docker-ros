@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile-upstream:master
+
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
 FROM ubuntu:24.04 AS main
 
@@ -190,6 +192,10 @@ RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip,
     PATH=/home/user/venv-ardupilot/bin:$PATH pip install isaacsim[all,extscache,ros2]==6.2.0.0 --extra-index-url https://pypi.nvidia.com
 
 ENV OMNI_KIT_ACCEPT_EULA=YES
+
+ARG TARGETARCH
+
+ENV LD_PRELOAD=#{${TARGETARCH#amd64}:+"/lib/aarch64-linux-gnu/libgomp.so.1"}
 
 RUN PATH=/home/user/venv-ardupilot/bin:$PATH python3 -c "import isaacsim"
 
