@@ -189,7 +189,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked,id=cache-apt-$TARGET
     sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt --no-install-recommends install -y ros-jazzy-mavros ros-jazzy-mavros-extras
 
 RUN --mount=type=cache,target=/home/user/.cache/pip,sharing=shared,id=cache-pip,uid=999 \
-    PATH=/home/user/venv-ardupilot/bin:$PATH pip install isaacsim[all,extscache]==6.2.0.0 --extra-index-url https://pypi.nvidia.com
+    PATH=/home/user/venv-ardupilot/bin:$PATH pip install isaacsim[all,extscache,ros2]==6.2.0.0 --extra-index-url https://pypi.nvidia.com
 
 ENV OMNI_KIT_ACCEPT_EULA=YES
 
